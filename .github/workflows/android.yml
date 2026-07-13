@@ -14,15 +14,15 @@ jobs:
       - name: Install Qt (desktop, needed by androiddeployqt)
         uses: jurplel/install-qt-action@v3
         with:
-          version: '5.15.2'
+          version: '6.5.3'
           target: 'desktop'
 
-      - name: Install Qt for Android (armv7)
+      - name: Install Qt for Android (arm64-v8a)
         uses: jurplel/install-qt-action@v3
         with:
-          version: '5.15.2'
+          version: '6.5.3'
           target: 'android'
-          arch: 'android_armv7'
+          arch: 'android_arm64_v8a'
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -39,7 +39,7 @@ jobs:
 
       - name: qmake
         run: |
-          qmake ScriptEditorQt.pro -spec android-clang ANDROID_ABIS="armeabi-v7a"
+          qmake ScriptEditorQt.pro -spec android-clang ANDROID_ABIS="arm64-v8a"
 
       - name: Build
         run: make -j$(nproc)
