@@ -54,9 +54,18 @@ jobs:
             exit 1
           fi
 
+      - name: Add custom app icon
+        run: |
+          QT_ANDROID_DIR=$(dirname $(dirname $(which qmake)))
+          mkdir -p android
+          cp -r "$QT_ANDROID_DIR/src/android/templates/"* android/
+          mkdir -p android/res/mipmap
+          cp icon.png android/res/mipmap/ic_launcher.png
+          sed -i 's/android:icon="[^"]*"/android:icon="@mipmap\/ic_launcher"/' android/AndroidManifest.xml
+
       - name: qmake
         run: |
-          qmake ScriptEditorQt.pro -spec android-clang ANDROID_ABIS="arm64-v8a" ANDROID_PLATFORM=android-33
+          qmake ScriptEditorQt.pro -spec android-clang ANDROID_ABIS="arm64-v8a" ANDROID_PLATFORM=android-33 ANDROID_PACKAGE_SOURCE_DIR=$PWD/android
 
       - name: Build
         run: make -j$(nproc)
