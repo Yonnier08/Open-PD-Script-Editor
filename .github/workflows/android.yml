@@ -55,7 +55,7 @@ jobs:
 
       - name: Deploy APK
         run: |
-          androiddeployqt --input android-ScriptEditorQt-deployment-settings.json --output android-build --gradle
+          androiddeployqt --input android-ScriptEditorQt-deployment-settings.json --output android-build --android-platform android-33 --gradle
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
