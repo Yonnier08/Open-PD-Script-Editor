@@ -48,7 +48,7 @@ jobs:
           MAIN_FILE=$(grep -rl "QApplication.*argc, *argv" --include=*.cpp . | head -n1)
           echo "Archivo encontrado: $MAIN_FILE"
           if [ -n "$MAIN_FILE" ]; then
-            sed -i '0,/QApplication.*argc, *argv/{s/\(.*QApplication.*argc, *argv.*\)/    qputenv("QT_SCALE_FACTOR", "0.85");\n\1/}' "$MAIN_FILE"
+            sed -i '0,/QApplication.*argc, *argv/{s/\(.*QApplication.*argc, *argv.*\)/    qputenv("QT_SCALE_FACTOR", "0.7");\n\1/}' "$MAIN_FILE"
           else
             echo "ERROR: no se encontró el archivo con QApplication"
             exit 1
