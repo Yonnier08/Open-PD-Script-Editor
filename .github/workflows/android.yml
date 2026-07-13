@@ -1,0 +1,55 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ touchbar ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt (desktop, needed by androiddeployqt)
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
+          target: 'desktop'
+
+      - name: Install Qt for Android (armv7)
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
+          target: 'android'
+          arch: 'android_armv7'
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Set up Android SDK/NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Remove macOS-only sources from .pro
+        run: |
+          sed -i '/KDMacTouchBar/d' ScriptEditorQt.pro || true
+
+      - name: qmake
+        run: |
+          qmake ScriptEditorQt.pro -spec android-clang ANDROID_ABIS="armeabi-v7a"
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Deploy APK
+        run: |
+          androiddeployqt --input android-ScriptEditorQt-deployment-settings.json --output android-build --gradle
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: android-build/build/outputs/apk/**/*.apk
