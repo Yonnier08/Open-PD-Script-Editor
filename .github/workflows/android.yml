@@ -46,6 +46,29 @@ jobs:
       - name: Build
         run: make -j$(nproc)
 
+      - name: Install (copy binary into deployment dir)
+        run: make INSTALL_ROOT=android-build install
+
+      - name: Deploy APK
+        run: |
+          androiddeployqt --input android-ScriptEditorQt-deployment-settings.json --output android-build --gradle
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: android-build/build/outputs/apk/**/*.apk
+      - name: Remove macOS-only sources from .pro
+        run: |
+          sed -i '/KDMacTouchBar/d' ScriptEditorQt.pro || true
+
+      - name: qmake
+        run: |
+          qmake ScriptEditorQt.pro -spec android-clang ANDROID_ABIS="arm64-v8a"
+
+      - name: Build
+        run: make -j$(nproc)
+
       - name: Deploy APK
         run: |
           androiddeployqt --input android-ScriptEditorQt-deployment-settings.json --output android-build --gradle
