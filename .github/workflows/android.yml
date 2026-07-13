@@ -16,6 +16,7 @@ jobs:
         with:
           version: '6.5.3'
           target: 'desktop'
+          modules: 'qt5compat'
 
       - name: Install Qt for Android (arm64-v8a)
         uses: jurplel/install-qt-action@v3
