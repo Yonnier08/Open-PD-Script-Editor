@@ -59,15 +59,19 @@ jobs:
           QT_ANDROID_DIR=$(dirname $(dirname $(which qmake)))
           mkdir -p android
           cp -r "$QT_ANDROID_DIR/src/android/templates/"* android/
-          find android/res -iname 'ic_launcher*.png' -delete
+          find android/res -iname 'ic_launcher*' -delete
           for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             mkdir -p "android/res/mipmap-$d"
             cp icon.png "android/res/mipmap-$d/ic_launcher.png"
+            cp icon.png "android/res/mipmap-$d/ic_launcher_round.png"
           done
           if grep -q 'android:icon=' android/AndroidManifest.xml; then
             sed -i 's/android:icon="[^"]*"/android:icon="@mipmap\/ic_launcher"/' android/AndroidManifest.xml
           else
             sed -i '0,/<application /s/<application /<application android:icon="@mipmap\/ic_launcher" /' android/AndroidManifest.xml
+          fi
+          if grep -q 'android:roundIcon=' android/AndroidManifest.xml; then
+            sed -i 's/android:roundIcon="[^"]*"/android:roundIcon="@mipmap\/ic_launcher_round"/' android/AndroidManifest.xml
           fi
 
       - name: qmake
