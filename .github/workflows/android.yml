@@ -60,10 +60,15 @@ jobs:
           mkdir -p android
           cp -r "$QT_ANDROID_DIR/src/android/templates/"* android/
           find android/res -iname 'ic_launcher*' -delete
+
+          sudo apt-get install -y imagemagick > /dev/null
+          convert icon.png -resize 512x512^ -gravity center -extent 512x512 icon_square.png
+          convert icon_square.png \( +clone -alpha extract -draw 'fill black polygon 0,0 0,90 90,0 fill white circle 90,90 90,0' \( +clone -flip \) -compose Multiply -composite \( +clone -flop \) -compose Multiply -composite \) -alpha off -compose CopyOpacity -composite icon_rounded.png
+
           for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             mkdir -p "android/res/mipmap-$d"
-            cp icon.png "android/res/mipmap-$d/ic_launcher.png"
-            cp icon.png "android/res/mipmap-$d/ic_launcher_round.png"
+            cp icon_rounded.png "android/res/mipmap-$d/ic_launcher.png"
+            cp icon_rounded.png "android/res/mipmap-$d/ic_launcher_round.png"
           done
           sed -i '0,/<application/s//<application android:icon="@mipmap\/ic_launcher" android:roundIcon="@mipmap\/ic_launcher_round"/' android/AndroidManifest.xml
           grep -n "android:icon" android/AndroidManifest.xml
