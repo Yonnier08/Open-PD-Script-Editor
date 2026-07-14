@@ -65,14 +65,8 @@ jobs:
             cp icon.png "android/res/mipmap-$d/ic_launcher.png"
             cp icon.png "android/res/mipmap-$d/ic_launcher_round.png"
           done
-          if grep -q 'android:icon=' android/AndroidManifest.xml; then
-            sed -i 's/android:icon="[^"]*"/android:icon="@mipmap\/ic_launcher"/' android/AndroidManifest.xml
-          else
-            sed -i '0,/<application /s/<application /<application android:icon="@mipmap\/ic_launcher" /' android/AndroidManifest.xml
-          fi
-          if grep -q 'android:roundIcon=' android/AndroidManifest.xml; then
-            sed -i 's/android:roundIcon="[^"]*"/android:roundIcon="@mipmap\/ic_launcher_round"/' android/AndroidManifest.xml
-          fi
+          sed -i '0,/<application/s//<application android:icon="@mipmap\/ic_launcher" android:roundIcon="@mipmap\/ic_launcher_round"/' android/AndroidManifest.xml
+          grep -n "android:icon" android/AndroidManifest.xml
 
       - name: qmake
         run: |
